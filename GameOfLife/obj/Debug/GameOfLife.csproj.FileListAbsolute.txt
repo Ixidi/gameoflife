@@ -1,0 +1,6 @@
+/Users/ixidi/RiderProjects/ConsoleApplication2/GameOfLife/bin/Debug/GameOfLife.exe
+/Users/ixidi/RiderProjects/ConsoleApplication2/GameOfLife/bin/Debug/GameOfLife.pdb
+/Users/ixidi/RiderProjects/ConsoleApplication2/GameOfLife/obj/Debug/GameOfLife.csprojAssemblyReference.cache
+/Users/ixidi/RiderProjects/ConsoleApplication2/GameOfLife/obj/Debug/GameOfLife.csproj.CoreCompileInputs.cache
+/Users/ixidi/RiderProjects/ConsoleApplication2/GameOfLife/obj/Debug/GameOfLife.exe
+/Users/ixidi/RiderProjects/ConsoleApplication2/GameOfLife/obj/Debug/GameOfLife.pdb
