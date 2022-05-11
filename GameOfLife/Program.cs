@@ -537,8 +537,6 @@ namespace GameOfLife
         public IBoard Board { get; }
         public int CurrentTurnNumber { get; private set; } = 0;
 
-        private IEnumerable<ITurnAction> TurnActions => GameTurnActions;
-
         public Game(IBoard board)
         {
             Board = board;
@@ -546,7 +544,7 @@ namespace GameOfLife
 
         public void NextTurn()
         {
-            foreach (var action in TurnActions)
+            foreach (var action in GameTurnActions)
             {
                 action.Execute(Board);
             }
