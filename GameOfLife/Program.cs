@@ -129,7 +129,7 @@ namespace GameOfLife
         char EmptyFieldSymbol { get; }
 
         IAnimalLegendKey? GetAnimalLegendKeyFromSymbol(char c);
-        IAnimalLegendKey GetAnimalLegendKey(IAnimal animal);
+        IAnimalLegendKey? GetAnimalLegendKey(IAnimal animal);
     }
 
     public interface IInputReader
@@ -144,7 +144,6 @@ namespace GameOfLife
 
     public abstract class AnimalBase : IAnimal
     {
-        private static readonly Random Random = new Random();
         public IEnumerable<IVector2> MovementOrder { get; }
 
         protected AnimalBase(IEnumerable<IVector2> movementOrder)
@@ -179,12 +178,7 @@ namespace GameOfLife
                 return null;
             }
 
-            if (Rand.RandBool())
-            {
-                return new MaleLion();
-            }
-
-            return new FemaleLion();
+            return AnimalFactory.Create(AnimalType.Lion, Rand.RandBool());
         }
     }
 
@@ -214,12 +208,7 @@ namespace GameOfLife
                 return null;
             }
 
-            if (Rand.RandBool())
-            {
-                return new MaleCrocodile();
-            }
-
-            return new FemaleCrocodile();
+            return AnimalFactory.Create(AnimalType.Crocodile, Rand.RandBool());
         }
     }
 
@@ -251,12 +240,7 @@ namespace GameOfLife
                 return null;
             }
 
-            if (Rand.RandBool())
-            {
-                return new MaleElephant();
-            }
-
-            return new FemaleElephant();
+            return AnimalFactory.Create(AnimalType.Elephant, Rand.RandBool());
         }
     }
 
@@ -287,12 +271,7 @@ namespace GameOfLife
                 return null;
             }
 
-            if (Rand.RandBool())
-            {
-                return new MaleAntelope();
-            }
-
-            return new FemaleAntelope();
+            return AnimalFactory.Create(AnimalType.Antelope, Rand.RandBool());
         }
     }
 
@@ -646,7 +625,7 @@ namespace GameOfLife
 
     public class BoardLegend : IBoardLegend
     {
-        private static readonly char EmptyFieldSymbolChar = '.';
+        private const char EmptyFieldSymbolChar = '.';
 
         private static readonly IEnumerable<IAnimalLegendKey> AnimalLegendKeys = new List<IAnimalLegendKey>
         {
@@ -667,10 +646,15 @@ namespace GameOfLife
             return AnimalLegendKeys.FirstOrDefault(key => key.Symbol == c);
         }
 
-        public IAnimalLegendKey GetAnimalLegendKey(IAnimal animal)
+        public IAnimalLegendKey? GetAnimalLegendKey(IAnimal animal)
         {
-            var type = MatchAnimalType(animal) ?? throw new ArgumentException("Legend does not contain given animal.");
-            return AnimalLegendKeys.First(key => key.Type == type && key.IsMale == animal is IMaleAnimal);
+            var type = MatchAnimalType(animal);
+            if (type == null)
+            {
+                return null;
+            }
+
+            return AnimalLegendKeys.FirstOrDefault(key => key.Type == type && key.IsMale == animal is IMaleAnimal);
         }
 
         private AnimalType? MatchAnimalType(IAnimal animal)
@@ -729,8 +713,8 @@ namespace GameOfLife
                     {
                         var animal = field.OccupyingAnimal!;
                         symbol = _boardLegend
-                            .GetAnimalLegendKey(animal)
-                            .Symbol;
+                            .GetAnimalLegendKey(animal)?
+                            .Symbol ?? throw new Exception($"There is no legend key defined for {animal}");
                     }
 
                     displayBuilder.Append(symbol);
@@ -775,7 +759,6 @@ namespace GameOfLife
                 game.NextTurn();
                 gameDisplay.DisplayGame(game);
             }
-            
         }
     }
 }
